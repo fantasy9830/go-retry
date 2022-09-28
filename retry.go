@@ -7,7 +7,7 @@ import (
 
 type RetryableFunc func() error
 
-func Retry(ctx context.Context, retryableFunc RetryableFunc, optFuncs ...OptionFunc) (lastErr error) {
+func Do(ctx context.Context, retryableFunc RetryableFunc, optFuncs ...OptionFunc) (lastErr error) {
 	// default options
 	opt := &options{
 		maxRetries:  3,

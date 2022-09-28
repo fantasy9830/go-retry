@@ -31,7 +31,7 @@ func (s *Suit) TestDefault() {
 	maxRetries := uint(3)
 
 	start := time.Now()
-	err := goretry.Retry(ctx, func() error {
+	err := goretry.Do(ctx, func() error {
 		retryCount++
 		return errors.New("TestDefault")
 	})
@@ -53,7 +53,7 @@ func (s *Suit) TestNoError() {
 	}
 
 	start := time.Now()
-	err := goretry.Retry(ctx, func() error {
+	err := goretry.Do(ctx, func() error {
 		retryCount++
 		return nil
 	}, options...)
@@ -75,7 +75,7 @@ func (s *Suit) TestMaxRetries() {
 			goretry.WithBackoff(goretry.BackoffLinear(s.Duration)),
 		}
 
-		err := goretry.Retry(ctx, func() error {
+		err := goretry.Do(ctx, func() error {
 			retryCount++
 			if retryCount == maxRetries {
 				return nil
@@ -98,7 +98,7 @@ func (s *Suit) TestMaxRetries() {
 			goretry.WithBackoff(goretry.BackoffLinear(s.Duration)),
 		}
 
-		err := goretry.Retry(ctx, func() error {
+		err := goretry.Do(ctx, func() error {
 			retryCount++
 			return errors.New("TestMaxRetries")
 		}, options...)
@@ -118,7 +118,7 @@ func (s *Suit) TestWithBackoff() {
 		}
 
 		start := time.Now()
-		err := goretry.Retry(ctx, func() error {
+		err := goretry.Do(ctx, func() error {
 			return errors.New("BackoffLinear")
 		}, options...)
 		duration := time.Since(start)
@@ -137,7 +137,7 @@ func (s *Suit) TestWithBackoff() {
 		}
 
 		start := time.Now()
-		err := goretry.Retry(ctx, func() error {
+		err := goretry.Do(ctx, func() error {
 			return errors.New("BackoffExponential")
 		}, options...)
 		duration := time.Since(start)
@@ -158,7 +158,7 @@ func (s *Suit) TestContext() {
 			goretry.WithBackoff(goretry.BackoffExponential(s.Duration)),
 		}
 
-		err := goretry.Retry(ctx, func() error {
+		err := goretry.Do(ctx, func() error {
 			retrySum++
 			if retrySum == 2 {
 				cancel()
@@ -176,7 +176,7 @@ func (s *Suit) TestContext() {
 		ctx, cancel := context.WithTimeout(context.Background(), 2*s.Duration)
 		defer cancel()
 		start := time.Now()
-		err := goretry.Retry(ctx, func() error {
+		err := goretry.Do(ctx, func() error {
 			return errors.New("TestContext")
 		})
 		duration := time.Since(start)

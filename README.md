@@ -1,5 +1,17 @@
 # go-retry
 
+## Usage
+### func MaxRetries
+```go
+func MaxRetries(maxRetries uint)
+```
+
+### func WithBackoff
+```go
+func WithBackoff(BackoffLinear(duration time.Duration))
+func WithBackoff(BackoffExponential(duration time.Duration))
+```
+
 ## examples
 ```go
 ctx := context.Background()
@@ -9,7 +21,7 @@ options := []goretry.OptionFunc{
 	goretry.WithBackoff(goretry.BackoffLinear(time.Second)),
 }
 
-goretry.Retry(ctx, func() error {
+goretry.Do(ctx, func() error {
 	req, err := http.NewRequest(http.MethodGet, "http://example.com", nil)
 	if err != nil {
 		return err

@@ -23,7 +23,7 @@ func main() {
 		goretry.WithBackoff(goretry.BackoffLinear(time.Second)),
 	}
 
-	goretry.Retry(ctx, func() error {
+	goretry.Do(ctx, func() error {
 		req, err := http.NewRequest(http.MethodGet, server.URL, nil)
 		if err != nil {
 			return err
