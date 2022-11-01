@@ -1,6 +1,11 @@
 # go-retry
 
 ## Usage
+### func WithContext
+```go
+func WithContext(ctx context.Context)
+```
+
 ### func MaxRetries
 ```go
 func MaxRetries(maxRetries uint)
