@@ -1,4 +1,4 @@
-package goretry
+package retry
 
 import "context"
 

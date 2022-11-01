@@ -19,13 +19,13 @@ func WithBackoff(BackoffExponential(duration time.Duration))
 
 ## examples
 ```go
-options := []goretry.OptionFunc{
-	goretry.WithContext(context.Background()),
-	goretry.MaxRetries(10),
-	goretry.WithBackoff(goretry.BackoffLinear(time.Second)),
+options := []retry.OptionFunc{
+	retry.WithContext(context.Background()),
+	retry.MaxRetries(10),
+	retry.WithBackoff(retry.BackoffLinear(time.Second)),
 }
 
-goretry.Do(func(ctx context.Context) error {
+retry.Do(func(ctx context.Context) error {
 	req, err := http.NewRequest(http.MethodGet, "http://example.com", nil)
 	if err != nil {
 		return err

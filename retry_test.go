@@ -1,4 +1,4 @@
-package goretry_test
+package retry_test
 
 import (
 	"context"
@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	goretry "github.com/fantasy9830/go-retry"
+	retry "github.com/fantasy9830/go-retry"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 )
@@ -21,7 +21,7 @@ func (s *Suit) SetupSuite() {
 	s.Duration = 100 * time.Millisecond
 }
 
-func TestGoRetry(t *testing.T) {
+func TestRetry(t *testing.T) {
 	suite.Run(t, new(Suit))
 }
 
@@ -30,7 +30,7 @@ func (s *Suit) TestDefault() {
 	maxRetries := uint(3)
 
 	start := time.Now()
-	err := goretry.Do(func(ctx context.Context) error {
+	err := retry.Do(func(ctx context.Context) error {
 		retryCount++
 		return errors.New("TestDefault")
 	})
@@ -46,12 +46,12 @@ func (s *Suit) TestNoError() {
 	var retryCount uint
 	maxRetries := uint(1)
 
-	options := []goretry.OptionFunc{
-		goretry.WithBackoff(goretry.BackoffLinear(s.Duration)),
+	options := []retry.OptionFunc{
+		retry.WithBackoff(retry.BackoffLinear(s.Duration)),
 	}
 
 	start := time.Now()
-	err := goretry.Do(func(ctx context.Context) error {
+	err := retry.Do(func(ctx context.Context) error {
 		retryCount++
 		return nil
 	}, options...)
@@ -67,12 +67,12 @@ func (s *Suit) TestMaxRetries() {
 		var retryCount int
 		maxRetries := 10
 
-		options := []goretry.OptionFunc{
-			goretry.MaxRetries(0),
-			goretry.WithBackoff(goretry.BackoffLinear(s.Duration)),
+		options := []retry.OptionFunc{
+			retry.MaxRetries(0),
+			retry.WithBackoff(retry.BackoffLinear(s.Duration)),
 		}
 
-		err := goretry.Do(func(ctx context.Context) error {
+		err := retry.Do(func(ctx context.Context) error {
 			retryCount++
 			if retryCount == maxRetries {
 				return nil
@@ -89,12 +89,12 @@ func (s *Suit) TestMaxRetries() {
 		var retryCount uint
 		maxRetries := uint(10)
 
-		options := []goretry.OptionFunc{
-			goretry.MaxRetries(maxRetries),
-			goretry.WithBackoff(goretry.BackoffLinear(s.Duration)),
+		options := []retry.OptionFunc{
+			retry.MaxRetries(maxRetries),
+			retry.WithBackoff(retry.BackoffLinear(s.Duration)),
 		}
 
-		err := goretry.Do(func(ctx context.Context) error {
+		err := retry.Do(func(ctx context.Context) error {
 			retryCount++
 			return errors.New("TestMaxRetries")
 		}, options...)
@@ -107,12 +107,12 @@ func (s *Suit) TestMaxRetries() {
 
 func (s *Suit) TestWithBackoff() {
 	s.T().Run("BackoffLinear", func(t *testing.T) {
-		options := []goretry.OptionFunc{
-			goretry.WithBackoff(goretry.BackoffLinear(s.Duration)),
+		options := []retry.OptionFunc{
+			retry.WithBackoff(retry.BackoffLinear(s.Duration)),
 		}
 
 		start := time.Now()
-		err := goretry.Do(func(ctx context.Context) error {
+		err := retry.Do(func(ctx context.Context) error {
 			return errors.New("BackoffLinear")
 		}, options...)
 		duration := time.Since(start)
@@ -123,13 +123,13 @@ func (s *Suit) TestWithBackoff() {
 	})
 
 	s.T().Run("BackoffExponential", func(t *testing.T) {
-		options := []goretry.OptionFunc{
-			goretry.MaxRetries(4),
-			goretry.WithBackoff(goretry.BackoffExponential(s.Duration)),
+		options := []retry.OptionFunc{
+			retry.MaxRetries(4),
+			retry.WithBackoff(retry.BackoffExponential(s.Duration)),
 		}
 
 		start := time.Now()
-		err := goretry.Do(func(ctx context.Context) error {
+		err := retry.Do(func(ctx context.Context) error {
 			return errors.New("BackoffExponential")
 		}, options...)
 		duration := time.Since(start)
@@ -145,13 +145,13 @@ func (s *Suit) TestContext() {
 		c, cancel := context.WithCancel(context.Background())
 		retrySum := 0
 
-		options := []goretry.OptionFunc{
-			goretry.WithContext(c),
-			goretry.MaxRetries(0),
-			goretry.WithBackoff(goretry.BackoffExponential(s.Duration)),
+		options := []retry.OptionFunc{
+			retry.WithContext(c),
+			retry.MaxRetries(0),
+			retry.WithBackoff(retry.BackoffExponential(s.Duration)),
 		}
 
-		err := goretry.Do(func(ctx context.Context) error {
+		err := retry.Do(func(ctx context.Context) error {
 			retrySum++
 			if retrySum == 2 {
 				cancel()
@@ -169,12 +169,12 @@ func (s *Suit) TestContext() {
 		c, cancel := context.WithTimeout(context.Background(), 2*s.Duration)
 		defer cancel()
 
-		options := []goretry.OptionFunc{
-			goretry.WithContext(c),
+		options := []retry.OptionFunc{
+			retry.WithContext(c),
 		}
 
 		start := time.Now()
-		err := goretry.Do(func(ctx context.Context) error {
+		err := retry.Do(func(ctx context.Context) error {
 			return errors.New("TestContext")
 		}, options...)
 		duration := time.Since(start)

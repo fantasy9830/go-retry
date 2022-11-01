@@ -8,7 +8,7 @@ import (
 	"net/http/httptest"
 	"time"
 
-	goretry "github.com/fantasy9830/go-retry"
+	retry "github.com/fantasy9830/go-retry"
 )
 
 func main() {
@@ -16,13 +16,13 @@ func main() {
 		w.Write([]byte("hello world"))
 	}))
 
-	options := []goretry.OptionFunc{
-		goretry.WithContext(context.Background()),
-		goretry.MaxRetries(10),
-		goretry.WithBackoff(goretry.BackoffLinear(time.Second)),
+	options := []retry.OptionFunc{
+		retry.WithContext(context.Background()),
+		retry.MaxRetries(10),
+		retry.WithBackoff(retry.BackoffLinear(time.Second)),
 	}
 
-	goretry.Do(func(ctx context.Context) error {
+	retry.Do(func(ctx context.Context) error {
 		req, err := http.NewRequest(http.MethodGet, server.URL, nil)
 		if err != nil {
 			return err
