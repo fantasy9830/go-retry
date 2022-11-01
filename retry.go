@@ -5,11 +5,12 @@ import (
 	"time"
 )
 
-type RetryableFunc func() error
+type RetryableFunc func(ctx context.Context) error
 
-func Do(ctx context.Context, retryableFunc RetryableFunc, optFuncs ...OptionFunc) (lastErr error) {
+func Do(retryableFunc RetryableFunc, optFuncs ...OptionFunc) (lastErr error) {
 	// default options
-	opt := &options{
+	opt := &Options{
+		ctx:         context.Background(),
 		maxRetries:  3,
 		backoffFunc: BackoffLinear(3 * time.Second),
 	}
@@ -20,22 +21,22 @@ func Do(ctx context.Context, retryableFunc RetryableFunc, optFuncs ...OptionFunc
 
 	if opt.maxRetries == 0 {
 		for attempt := uint(0); ; attempt++ {
-			if err := waitRetryBackoff(ctx, attempt, opt); err != nil {
+			if err := waitRetryBackoff(attempt, opt); err != nil {
 				return err
 			}
 
-			lastErr = retryableFunc()
+			lastErr = retryableFunc(opt.ctx)
 			if lastErr == nil {
 				return nil
 			}
 		}
 	} else {
 		for attempt := uint(0); attempt < opt.maxRetries; attempt++ {
-			if err := waitRetryBackoff(ctx, attempt, opt); err != nil {
+			if err := waitRetryBackoff(attempt, opt); err != nil {
 				return err
 			}
 
-			lastErr = retryableFunc()
+			lastErr = retryableFunc(opt.ctx)
 			if lastErr == nil {
 				return nil
 			}
@@ -45,14 +46,14 @@ func Do(ctx context.Context, retryableFunc RetryableFunc, optFuncs ...OptionFunc
 	return lastErr
 }
 
-func waitRetryBackoff(ctx context.Context, attempt uint, opt *options) (err error) {
+func waitRetryBackoff(attempt uint, opt *Options) (err error) {
 	var waitTime time.Duration = 0
 	if attempt > 0 {
 		waitTime = opt.backoffFunc(attempt)
 	}
 
 	if waitTime > 0 {
-		err = sleep(ctx, waitTime)
+		err = sleep(opt.ctx, waitTime)
 	}
 
 	return err

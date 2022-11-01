@@ -16,14 +16,13 @@ func main() {
 		w.Write([]byte("hello world"))
 	}))
 
-	ctx := context.Background()
-
 	options := []goretry.OptionFunc{
+		goretry.WithContext(context.Background()),
 		goretry.MaxRetries(10),
 		goretry.WithBackoff(goretry.BackoffLinear(time.Second)),
 	}
 
-	goretry.Do(ctx, func() error {
+	goretry.Do(func(ctx context.Context) error {
 		req, err := http.NewRequest(http.MethodGet, server.URL, nil)
 		if err != nil {
 			return err
