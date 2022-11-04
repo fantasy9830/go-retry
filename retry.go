@@ -5,9 +5,7 @@ import (
 	"time"
 )
 
-type RetryableFunc func(ctx context.Context) error
-
-func Do(retryableFunc RetryableFunc, optFuncs ...OptionFunc) (lastErr error) {
+func Do(retryableFunc func(context.Context) error, optFuncs ...OptionFunc) (lastErr error) {
 	// default options
 	opt := &Options{
 		ctx:         context.Background(),
