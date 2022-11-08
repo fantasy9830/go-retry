@@ -20,6 +20,10 @@ func Do(retryableFunc func(context.Context) error, optFuncs ...OptionFunc) (last
 	if opt.maxRetries == 0 {
 		for attempt := uint(0); ; attempt++ {
 			if err := waitRetryBackoff(attempt, opt); err != nil {
+				if lastErr != nil {
+					return lastErr
+				}
+
 				return err
 			}
 
@@ -31,6 +35,10 @@ func Do(retryableFunc func(context.Context) error, optFuncs ...OptionFunc) (last
 	} else {
 		for attempt := uint(0); attempt < opt.maxRetries; attempt++ {
 			if err := waitRetryBackoff(attempt, opt); err != nil {
+				if lastErr != nil {
+					return lastErr
+				}
+
 				return err
 			}
 

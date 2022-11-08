@@ -140,7 +140,7 @@ func (s *Suit) TestWithBackoff() {
 	})
 }
 
-func (s *Suit) TestContext() {
+func (s *Suit) TestWithContext() {
 	s.T().Run("context with cancel", func(t *testing.T) {
 		c, cancel := context.WithCancel(context.Background())
 		retrySum := 0
