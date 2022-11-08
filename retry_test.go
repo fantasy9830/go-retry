@@ -161,7 +161,7 @@ func (s *Suit) TestWithContext() {
 		}, options...)
 
 		assert.Error(t, err)
-		assert.Equal(t, "context canceled", err.Error())
+		assert.Equal(t, "TestContext", err.Error())
 		assert.EqualValues(t, 2, retrySum)
 	})
 
@@ -180,7 +180,7 @@ func (s *Suit) TestWithContext() {
 		duration := time.Since(start)
 
 		assert.Error(t, err)
-		assert.Equal(t, "context deadline exceeded", err.Error())
+		assert.Equal(t, "TestContext", err.Error())
 		assert.WithinRange(t, start.Add(duration), start, start.Add(3*s.Duration))
 	})
 }
