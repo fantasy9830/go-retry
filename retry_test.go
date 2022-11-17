@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	retry "github.com/fantasy9830/go-retry"
+	"github.com/fantasy9830/go-retry"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 )
