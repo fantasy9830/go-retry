@@ -1,5 +1,10 @@
 # go-retry
 
+## Installation
+```shell
+go get github.com/fantasy9830/go-retry
+```
+
 ## Usage
 ### func WithContext
 ```go
