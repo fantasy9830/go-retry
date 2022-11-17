@@ -10,7 +10,7 @@ import (
 func BenchmarkRetryDo(b *testing.B) {
 	b.ReportAllocs()
 	for n := 0; n < b.N; n++ {
-		retry.Do(func(ctx context.Context) error {
+		_ = retry.Do(func(ctx context.Context) error {
 			return nil
 		})
 	}
